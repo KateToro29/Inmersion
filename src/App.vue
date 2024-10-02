@@ -1,23 +1,20 @@
 <script setup>
-import Formulario from './components/Formulario.vue'
 import Navigation from './components/navigation.vue'
-import ListarGiras from './components/ListarGiras.vue'
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import BodyLanding  from './components/BodyLanding.vue'
+import Formulario from './components/Formulario.vue';
+
 </script>
 
 <template>
-  <div>
-    <a href="https://oferta.senasofiaplus.edu.co/sofia-oferta/" target="_blank">
-      <img src="../media/img/logo-sena-verde-png-sin-fondo.webp" class="logo" alt="Sena logo" />
-    </a>
-  </div>
-  
-  <Navigation></Navigation>
-  <Formulario></Formulario>
-  <ListarGiras></ListarGiras>
+  <router-view />
+  <!-- <div class="container">
+    <Navigation></Navigation>
+    <BodyLanding></BodyLanding>
+    <Formulario></Formulario>
+  </div> --> 
 </template>
-
-
-
 
 <style scoped>
 .logo {

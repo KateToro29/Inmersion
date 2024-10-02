@@ -4,8 +4,9 @@
     <div>
       <h3>Datos almacenados:</h3>
       <ul>
-        <li>Nombre: {{ datos.nombre }}</li>
-        <li>Apellido: {{ datos.apellido }}</li>
+        <li>Regional: {{ datos.Regional }}</li>
+        <li>CentroFormacion: {{ datos.CentroFormacion }}</li>
+        <li>Instructor: {{ datos.Instructor }}</li>
         <li>Correo electrónico: {{ datos.correo }}</li>
       </ul>
     </div>
