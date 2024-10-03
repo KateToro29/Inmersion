@@ -26,17 +26,16 @@
 				</button>
 			</div>
 			<div class="col-4">
-				<div class="login-form border  rounded p-4">
+				<div class="login-form border rounded p-4">
 					<h4 class="text-center mb-4">Iniciar Sesión</h4>
 					<form>
 						<div class="mb-3">
 							<label for="email" class="form-label">Correo Electrónico</label>
-							<input type="email" class="form-control" id="email" 
-								required>
+							<input type="email" class="form-control" id="email" required>
 						</div>
 						<div class="mb-3">
 							<label for="password" class="form-label">Contraseña</label>
-							<input type="password" class="form-control" id="password"  required>
+							<input type="password" class="form-control" id="password" required>
 						</div>
 						<div class="mb-3 form-check">
 							<input type="checkbox" class="form-check-input" id="rememberMe">
@@ -52,6 +51,73 @@
 
 
 </template>
+<style>
+  .login-form {
+    max-inline-size: 400px;
+    margin: 3px auto;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+  }
+
+  .login-form h4 {
+    color: #333;
+    font-size: 24px;
+    font-weight: bold;
+  }
+
+  .login-form .form-label {
+    font-size: 14px;
+    color: #555;
+  }
+
+  .login-form input {
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .login-form input:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
+  }
+
+  .login-form .form-check-label {
+    font-size: 14px;
+    color: #555;
+  }
+
+  .login-form .btn {
+    font-size: 16px;
+    background-color: #28a745;
+    border: none;
+    padding: 12px 0;
+    border-radius: 8px;
+  }
+
+  .login-form .btn:hover {
+    background-color: #218838;
+  }
+
+  .login-form p {
+    font-size: 14px;
+    color: #555;
+  }
+
+  .login-form p a {
+    color: #28a745;
+    text-decoration: none;
+  }
+
+  .login-form p a:hover {
+    text-decoration: underline;
+  }
+
+  .login-form {
+    padding: 30px;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+  }
+</style>
 
 <script>
 export default {
