@@ -4,7 +4,7 @@
 			<div id="carouselExampleFade" class="carousel slide carousel-fade justify-content-centert col-7" data-bs-ride="carousel">
 				<div class="carousel-inner w-100 rounded overflow-hidden">
 					<div class="carousel-item active">
-						<img src="/src/img/GirasTecnicas.jpeg" class="d-block w-100" alt="Imagen 1">
+						<img src="/src/img/GIRA-TECNICA-CAFETERA-850x425.png" class="d-block w-100" alt="Imagen 1">
 					</div>
 					<div class="carousel-item">
 						<img src="/src/img/GIRA-aguaccate-850x425.png" class="d-block w-100" alt="Imagen 2">
