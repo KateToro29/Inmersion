@@ -34,18 +34,28 @@
     <!-- Tabla de Instructores -->
     <div class="table-responsive mt-5">
       <h2 class="text-center mb-4">Lista de Instructores</h2>
+
+      <!-- Barra de búsqueda -->
+      <input v-model="search" class="form-control mb-3" type="text" placeholder="Buscar por nombre, centro o correo">
+
+      <!-- Filtro por Regional -->
+      <select v-model="selectedRegional" class="form-select mb-3">
+        <option value="">Todos los regionales</option>
+        <option v-for="regional in regionales" :key="regional">{{ regional }}</option>
+      </select>
+
       <table class="table table-bordered table-hover">
         <thead class="table-dark">
           <tr>
-            <th scope="col">Regional</th>
-            <th scope="col">Centro de Formación</th>
-            <th scope="col">Instructor</th>
-            <th scope="col">Correo electrónico</th>
+            <th scope="col" @click="ordenarPor('Regional')">Regional <span>{{ sortedColumn === 'Regional' ? sortedOrder : '' }}</span></th>
+            <th scope="col" @click="ordenarPor('CentroFormacion')">Centro de Formación <span>{{ sortedColumn === 'CentroFormacion' ? sortedOrder : '' }}</span></th>
+            <th scope="col" @click="ordenarPor('Instructor')">Instructor <span>{{ sortedColumn === 'Instructor' ? sortedOrder : '' }}</span></th>
+            <th scope="col" @click="ordenarPor('correo')">Correo electrónico <span>{{ sortedColumn === 'correo' ? sortedOrder : '' }}</span></th>
             <th scope="col">Acciones</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(instructor, index) in instructores" :key="index">
+          <tr v-for="(instructor, index) in instructoresFiltrados" :key="index">
             <td>{{ instructor.Regional }}</td>
             <td>{{ instructor.CentroFormacion }}</td>
             <td>{{ instructor.Instructor }}</td>
@@ -58,8 +68,10 @@
         </tbody>
       </table>
     </div>
+
   </div>
 </template>
+
 
 <style>
 /* Container del formulario y tabla */
@@ -112,6 +124,7 @@
   color: #ffffff;
 }
 
+
 /* Botones de acciones (Editar y Eliminar) */
 .btn-warning {
   background-color: #ffc107;
@@ -154,9 +167,38 @@ export default {
         Instructor: '',
         correo: ''
       },
-      instructores: [],
-      editIndex: null // Para almacenar el índice del instructor a editar
+      instructores: [], // Lista de instructores
+      editIndex: null, // Para almacenar el índice del instructor a editar
+      search: '', // Para la búsqueda
+      selectedRegional: '', // Para el filtro por regional
+      sortedColumn: '', // Columna actual ordenada
+      sortedOrder: 'asc' // Orden ascendente o descendente
     };
+  },
+  computed: {
+    // Filtrar instructores en función de la búsqueda y el filtro de regional
+    instructoresFiltrados() {
+      let filtrados = this.instructores;
+
+      if (this.search) {
+        filtrados = filtrados.filter(instructor =>
+          instructor.Instructor.toLowerCase().includes(this.search.toLowerCase()) ||
+          instructor.CentroFormacion.toLowerCase().includes(this.search.toLowerCase()) ||
+          instructor.correo.toLowerCase().includes(this.search.toLowerCase())
+        );
+      }
+
+      if (this.selectedRegional) {
+        filtrados = filtrados.filter(instructor => instructor.Regional === this.selectedRegional);
+      }
+
+      return this.ordenar(filtrados);
+    },
+    
+    // Obtener lista de regionales únicos para el filtro
+    regionales() {
+      return [...new Set(this.instructores.map(instructor => instructor.Regional))];
+    }
   },
   methods: {
     guardarDatos() {
@@ -195,6 +237,28 @@ export default {
           correo: ''
         };
       }
+    },
+    ordenarPor(columna) {
+      if (this.sortedColumn === columna) {
+        this.sortedOrder = this.sortedOrder === 'asc' ? 'desc' : 'asc';
+      } else {
+        this.sortedOrder = 'asc';
+      }
+      this.sortedColumn = columna;
+    },
+    ordenar(instructores) {
+      if (!this.sortedColumn) return instructores;
+
+      return instructores.sort((a, b) => {
+        let valA = a[this.sortedColumn];
+        let valB = b[this.sortedColumn];
+
+        if (this.sortedOrder === 'asc') {
+          return valA > valB ? 1 : -1;
+        } else {
+          return valA < valB ? 1 : -1;
+        }
+      });
     }
   }
 };

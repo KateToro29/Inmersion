@@ -1,7 +1,7 @@
 <template>
-	<div class="container">
+	<div >
 		<div class="row">
-			<div id="carouselExampleFade" class="carousel slide carousel-fade col-8" data-bs-ride="carousel">
+			<div id="carouselExampleFade" class="carousel slide carousel-fade justify-content-centert col-7" data-bs-ride="carousel">
 				<div class="carousel-inner w-100 rounded overflow-hidden">
 					<div class="carousel-item active">
 						<img src="/src/img/GirasTecnicas.jpeg" class="d-block w-100" alt="Imagen 1">
@@ -25,7 +25,7 @@
 					<span class="visually-hidden">Next</span>
 				</button>
 			</div>
-			<div class="col-4">
+			<div class="col-5">
 				<div class="login-form border rounded p-4">
 					<h4 class="text-center mb-4">Iniciar Sesión</h4>
 					<form>

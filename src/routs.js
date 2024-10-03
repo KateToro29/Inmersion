@@ -15,6 +15,7 @@ const routes = [
     name: 'Giras',
     component: Giras
   }
+  
 ];
 
 const router = createRouter({

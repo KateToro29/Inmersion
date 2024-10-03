@@ -25,6 +25,9 @@
             <li class="nav-item" v-if="$route.path !== '/girastecnicas'">
               <router-link class="nav-link" to="/girastecnicas">Giras</router-link>
             </li>
+            <li class="nav-item" v-if="$route.path === '/girastecnicas'">
+              <router-link class="nav-link" to="/TableFilter">Listar Giras</router-link>
+            </li>
           </ul>
         </div>
       </div>
