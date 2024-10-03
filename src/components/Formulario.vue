@@ -2,7 +2,7 @@
   <div class="container mt-4">
     <!-- Formulario -->
     <form @submit.prevent="guardarDatos" class="form-section">
-      <h2 class="text-center mb-4">{{ editIndex === null ? 'Agregar Instructor' : 'Actualizar Instructor' }}</h2>
+      <h3 class="text-center mb-2">{{ editIndex === null ? 'Agregar Instructor' : 'Actualizar Instructor' }}</h3>
 
       <div class="mb-3">
         <label for="regional" class="form-label">Regional:</label>
@@ -33,7 +33,7 @@
 
     <!-- Tabla de Instructores -->
     <div class="table-responsive mt-5">
-      <h2 class="text-center mb-4">Lista de Instructores</h2>
+      <h4 class="text-center mb-4">Instructores Giras Técnicas</h4>
 
       <!-- Barra de búsqueda -->
       <input v-model="search" class="form-control mb-3" type="text" placeholder="Buscar por nombre, centro o correo">
@@ -43,13 +43,19 @@
         <option value="">Todos los regionales</option>
         <option v-for="regional in regionales" :key="regional">{{ regional }}</option>
       </select>
+      <!-- Botones para exportar -->
+      <div class="mb-3">
+        <button class="btn btn-primary me-2 " @click="exportarCSV">Exportar a CSV</button>
+        <button class="btn btn-success " @click="exportarExcel">Exportar a Excel</button>
+        
+      </div>
 
       <table class="table table-bordered table-hover">
-        <thead class="table-dark">
+        <thead class="table-primary">
           <tr>
-            <th scope="col" @click="ordenarPor('Regional')">Regional <span>{{ sortedColumn === 'Regional' ? sortedOrder : '' }}</span></th>
+            <th  scope="col" @click="ordenarPor('Regional')">Regional <span>{{ sortedColumn === 'Regional' ? sortedOrder : '' }}</span></th>
             <th scope="col" @click="ordenarPor('CentroFormacion')">Centro de Formación <span>{{ sortedColumn === 'CentroFormacion' ? sortedOrder : '' }}</span></th>
-            <th scope="col" @click="ordenarPor('Instructor')">Instructor <span>{{ sortedColumn === 'Instructor' ? sortedOrder : '' }}</span></th>
+            <th  scope="col" @click="ordenarPor('Instructor')">Instructor <span>{{ sortedColumn === 'Instructor' ? sortedOrder : '' }}</span></th>
             <th scope="col" @click="ordenarPor('correo')">Correo electrónico <span>{{ sortedColumn === 'correo' ? sortedOrder : '' }}</span></th>
             <th scope="col">Acciones</th>
           </tr>
@@ -72,6 +78,125 @@
   </div>
 </template>
 
+<script>
+import * as XLSX from "xlsx";
+
+export default {
+  data() {
+    return {
+      formData: {
+        Regional: '',
+        CentroFormacion: '',
+        Instructor: '',
+        correo: ''
+      },
+      instructores: [], 
+      editIndex: null, 
+      search: '', 
+      selectedRegional: '', // 
+      sortedColumn: '', // 
+      sortedOrder: 'asc' // Orden ascendente o descendente
+    };
+  },
+  computed: {
+    instructoresFiltrados() {
+      let filtrados = this.instructores;
+
+      if (this.search) {
+        filtrados = filtrados.filter(instructor =>
+          instructor.Instructor.toLowerCase().includes(this.search.toLowerCase()) ||
+          instructor.CentroFormacion.toLowerCase().includes(this.search.toLowerCase()) ||
+          instructor.correo.toLowerCase().includes(this.search.toLowerCase())
+        );
+      }
+
+      if (this.selectedRegional) {
+        filtrados = filtrados.filter(instructor => instructor.Regional === this.selectedRegional);
+      }
+
+      return this.ordenar(filtrados);
+    },
+    
+    regionales() {
+      return [...new Set(this.instructores.map(instructor => instructor.Regional))];
+    }
+  },
+  methods: {
+    guardarDatos() {
+      if (this.editIndex === null) {
+        this.instructores.push({ ...this.formData });
+      } else {
+        this.instructores[this.editIndex] = { ...this.formData };
+        this.editIndex = null;
+      }
+
+      this.formData = {
+        Regional: '',
+        CentroFormacion: '',
+        Instructor: '',
+        correo: ''
+      };
+    },
+    editarInstructor(index) {
+      this.formData = { ...this.instructores[index] };
+      this.editIndex = index;
+    },
+    eliminarInstructor(index) {
+      this.instructores.splice(index, 1);
+      if (this.editIndex === index) {
+        this.editIndex = null;
+        this.formData = {
+          Regional: '',
+          CentroFormacion: '',
+          Instructor: '',
+          correo: ''
+        };
+      }
+    },
+    ordenarPor(columna) {
+      if (this.sortedColumn === columna) {
+        this.sortedOrder = this.sortedOrder === 'asc' ? 'desc' : 'asc';
+      } else {
+        this.sortedOrder = 'asc';
+      }
+      this.sortedColumn = columna;
+    },
+    ordenar(instructores) {
+      if (!this.sortedColumn) return instructores;
+
+      return instructores.sort((a, b) => {
+        let valA = a[this.sortedColumn];
+        let valB = b[this.sortedColumn];
+
+        if (this.sortedOrder === 'asc') {
+          return valA > valB ? 1 : -1;
+        } else {
+          return valA < valB ? 1 : -1;
+        }
+      });
+    },
+    exportarExcel() {
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.json_to_sheet(this.instructores);
+      XLSX.utils.book_append_sheet(wb, ws, "Instructores");
+      XLSX.writeFile(wb, "instructores.xlsx");
+    },
+    exportarCSV() {
+      const HojaCalculo = XLSX.utils.json_to_sheet(this.instructores);
+      const csv = XLSX.utils.sheet_to_csv(HojaCalculo); // Convertir hoja a CSV
+      const ObjetoBlob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(ObjetoBlob);
+
+      link.setAttribute("href", url);
+      link.setAttribute("download", "instructores.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  }
+};
+</script>
 
 <style>
 /* Container del formulario y tabla */
@@ -119,12 +244,11 @@
 }
 
 /* Estilos del encabezado de la tabla */
-.table-dark {
+.table-dark{
   background-color: #04324d;
   color: #ffffff;
+
 }
-
-
 /* Botones de acciones (Editar y Eliminar) */
 .btn-warning {
   background-color: #ffc107;
@@ -156,110 +280,3 @@
   }
 }
 </style>
-
-<script>
-export default {
-  data() {
-    return {
-      formData: {
-        Regional: '',
-        CentroFormacion: '',
-        Instructor: '',
-        correo: ''
-      },
-      instructores: [], // Lista de instructores
-      editIndex: null, // Para almacenar el índice del instructor a editar
-      search: '', // Para la búsqueda
-      selectedRegional: '', // Para el filtro por regional
-      sortedColumn: '', // Columna actual ordenada
-      sortedOrder: 'asc' // Orden ascendente o descendente
-    };
-  },
-  computed: {
-    // Filtrar instructores en función de la búsqueda y el filtro de regional
-    instructoresFiltrados() {
-      let filtrados = this.instructores;
-
-      if (this.search) {
-        filtrados = filtrados.filter(instructor =>
-          instructor.Instructor.toLowerCase().includes(this.search.toLowerCase()) ||
-          instructor.CentroFormacion.toLowerCase().includes(this.search.toLowerCase()) ||
-          instructor.correo.toLowerCase().includes(this.search.toLowerCase())
-        );
-      }
-
-      if (this.selectedRegional) {
-        filtrados = filtrados.filter(instructor => instructor.Regional === this.selectedRegional);
-      }
-
-      return this.ordenar(filtrados);
-    },
-    
-    // Obtener lista de regionales únicos para el filtro
-    regionales() {
-      return [...new Set(this.instructores.map(instructor => instructor.Regional))];
-    }
-  },
-  methods: {
-    guardarDatos() {
-      if (this.editIndex === null) {
-        // Agrega una copia de formData a la lista de instructores
-        this.instructores.push({ ...this.formData });
-      } else {
-        // Actualiza el instructor existente
-        this.instructores[this.editIndex] = { ...this.formData };
-        this.editIndex = null; // Restablece el índice de edición
-      }
-
-      // Limpia el formulario
-      this.formData = {
-        Regional: '',
-        CentroFormacion: '',
-        Instructor: '',
-        correo: ''
-      };
-    },
-    editarInstructor(index) {
-      // Carga los datos del instructor seleccionado en el formulario
-      this.formData = { ...this.instructores[index] }; // Copia el objeto
-      this.editIndex = index; // Establece el índice del instructor a editar
-    },
-    eliminarInstructor(index) {
-      // Elimina el instructor de la lista
-      this.instructores.splice(index, 1);
-      // Si se elimina el instructor que se está editando, limpiar el formulario
-      if (this.editIndex === index) {
-        this.editIndex = null;
-        this.formData = {
-          Regional: '',
-          CentroFormacion: '',
-          Instructor: '',
-          correo: ''
-        };
-      }
-    },
-    ordenarPor(columna) {
-      if (this.sortedColumn === columna) {
-        this.sortedOrder = this.sortedOrder === 'asc' ? 'desc' : 'asc';
-      } else {
-        this.sortedOrder = 'asc';
-      }
-      this.sortedColumn = columna;
-    },
-    ordenar(instructores) {
-      if (!this.sortedColumn) return instructores;
-
-      return instructores.sort((a, b) => {
-        let valA = a[this.sortedColumn];
-        let valB = b[this.sortedColumn];
-
-        if (this.sortedOrder === 'asc') {
-          return valA > valB ? 1 : -1;
-        } else {
-          return valA < valB ? 1 : -1;
-        }
-      });
-    }
-  }
-};
-</script>

@@ -4,6 +4,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Home from './views/home.vue';
 import Giras from './views/girastecnicas.vue';
 
+
 const routes = [
   {
     path: '/',
@@ -14,7 +15,8 @@ const routes = [
     path: '/girastecnicas',
     name: 'Giras',
     component: Giras
-  }
+  },
+  
   
 ];
 
